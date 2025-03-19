@@ -1084,35 +1084,3 @@ def _maybe_raise_error_for_incorrect_transformers(config_dict):
                 break
     if has_transformers_component and not is_transformers_version(">", "4.47.1"):
         raise ValueError("Please upgrade your `transformers` installation to the latest version to use DDUF.")
-
-
-def _resolve_quant_config(quant_config, is_diffusers=True, module_name=None):
-    if is_diffusers:
-        from ..quantizers.auto import AUTO_QUANTIZATION_CONFIG_MAPPING
-    else:
-        from transformers.quantizers.auto import AUTO_QUANTIZATION_CONFIG_MAPPING
-
-    # Granular case.
-    if getattr(quant_config, "is_granular", False):
-        config = quant_config.mapping.get(module_name)
-        quant_backend = config.get("quant_backend")
-        if quant_backend not in AUTO_QUANTIZATION_CONFIG_MAPPING:
-            raise ValueError(
-                f"Module '{module_name}': Provided quant_backend={quant_backend} was not found. "
-                f"Available ones are: {list(AUTO_QUANTIZATION_CONFIG_MAPPING.keys())}."
-            )
-        quant_config_cls = AUTO_QUANTIZATION_CONFIG_MAPPING[quant_backend]
-        quant_kwargs = config.get("quant_kwargs")
-
-        return quant_config_cls(**quant_kwargs)
-    else:
-        # Global config case.
-        quant_backend = quant_config.quant_backend
-        if quant_backend not in AUTO_QUANTIZATION_CONFIG_MAPPING:
-            raise ValueError(
-                f"Provided quant_backend={quant_backend} was not found. "
-                f"Available ones are: {list(AUTO_QUANTIZATION_CONFIG_MAPPING.keys())}."
-            )
-        quant_config_cls = AUTO_QUANTIZATION_CONFIG_MAPPING[quant_backend]
-        quant_kwargs = quant_config.quant_kwargs
-        return quant_config_cls(**quant_kwargs)
