@@ -24,6 +24,7 @@ logger = logging.get_logger(__name__)
 
 class PipelineQuantizationConfig:
     """TODO"""
+
     def __init__(
         self,
         quant_backend: str = None,
