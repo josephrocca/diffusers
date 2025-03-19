@@ -156,7 +156,7 @@ class PipelineQuantizationConfig:
         # Fallback: no applicable configuration found.
         return None
 
-    def _get_quant_config_list():
+    def _get_quant_config_list(self):
         if is_transformers_available():
             from transformers.quantizers.auto import (
                 AUTO_QUANTIZATION_CONFIG_MAPPING as quant_config_mapping_transformers,
